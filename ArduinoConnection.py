@@ -31,7 +31,8 @@ class ArduinoConnection:
         except AttributeError:
             print("Couldn't read from Arduino!")
 
-    def get_ports(self) -> list[str]:
+    @staticmethod
+    def get_ports() -> list[str]:
         return [port.device for port in serial.tools.list_ports.comports()]
     
 

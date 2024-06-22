@@ -5,7 +5,7 @@ from ttkbootstrap.constants import *
 class App(ttk.Window):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.geometry('300x200')
+        self.geometry('1700x723')  # Tamaño de la ventana (ratio 2.35:1)
         self.title('Probando ttkboostrap')
         icono = ttk.PhotoImage(file='img\\sinFondo.png')
         self.iconphoto(False, icono, icono)
@@ -18,7 +18,7 @@ class App(ttk.Window):
 
 def main():
     configure = {
-        "themename": "solar"
+        "themename": "solar"  # Determina el tema de la ventana
     }
 
     app = App(**configure)

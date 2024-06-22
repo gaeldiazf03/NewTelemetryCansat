@@ -1,5 +1,6 @@
 import regex
 import measurement
+import pprint
 
 @measurement.singleton
 class RegexData:
@@ -17,7 +18,7 @@ class RegexData:
         list_q_data = which_load.findall(self.string)
         return list_q_data
 
-    def get_status(self, q: int, looking: str) -> float:
+    def get_status(self, q: int, looking: str) -> str:
         # Regex para la búsqueda de datos
         look_for = regex.compile(r'''(
                                  ({}):  # Búsqueda de la palabra clave.
@@ -26,27 +27,33 @@ class RegexData:
         try:
             alldata = str(self.list_q_data[q-1][2])
         except IndexError:
-            return None
+            return "None"
         else:
             seeing = look_for.search(alldata)
             if seeing is not None:
-                return float(seeing.group(3))
+                return seeing.group(3)
             else:
-                return None
+                return "None"
             
 
 @measurement.measure_time
 def main(text: str):
     data = RegexData(text)
+    print("/*Búsqueda de datos*/")
+    pprint.pprint(RegexData(text).get_data_q())
 
     print("/*Búsqueda de datos*/")
     data_temp = data.get_status(1, "TEMP")
-    data_Q2 = data.get_status(2, "LONG")
+    data_Q2 = data.get_status(2, "Ax")
+    data_time = data.get_status(3, "Time")
 
     print(data_temp)
     print(data_Q2)
+    print(data_time)
 
 
 if __name__ == '__main__':
-    text = "Serial1:(+RCV=3,137,TEMP:31.69,Ax:1.14,Ay:1.17,Az:9.50,Gx:-0.01,Gy:-0.07,Gz:-0.03,LAT1:22.29,LON1:-97.88,PRES:1012.78,HUM:61.26,ALT:4.36,Pila:0.00,0%,ETAPA:1,-47,30),Serial2:()"
+    text = '''Serial1:(+RCV=3,137,TEMP:31.69,Ax:1.14,Ay:1.17,Az:9.50,Gx:-0.01,Gy:-0.07,Gz:-0.03,LAT1:22.29,LON1:-97.88,PRES:1012.78,HUM:61.26,ALT:4.36,Pila:0.00,0%,ETAPA:1,-47,30),
+              Serial2:(+RCV=3,137,TEMP:31.69,Ax:1.14,Ay:1.17,Az:9.50,-47,30),
+              Serial3:(Time:0123)'''
     main(text)

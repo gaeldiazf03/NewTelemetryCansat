@@ -111,7 +111,8 @@ class ExcelRegister:
     def list_headers(self) -> list[str]:
         return self.headers
 
-    def _randFloat(self) -> str:
+    @staticmethod
+    def _randFloat() -> str:
         if np.random.random() < 0.05:
             return "None"
         return np.round(np.random.random() * 100, 2)
@@ -121,7 +122,7 @@ class ExcelRegister:
 def main():
     names = ["Tiempo", "TEMP", "AX", "AY", "AZ", "GX", "GY", "GZ", "VEL", "LAT1", "LON1", "LAT2", "LON2", "PRES", "HUM", "ALT", "PILA1", "PILA2", "DIST"]
     dp = ExcelRegister("Telemetria.xlsx", names)  # Se crea el objeto para registrar los datos
-    # datos = {name: [str(dp._randFloat())] for name in names}
+    datos = {name: [str(ExcelRegister._randFloat())] for name in names}
 
     # for name in names:
     #     dp.insert_graph("Tiempo", name)
