@@ -5,6 +5,10 @@ import os
 from measurement import singleton
 
 
+def get_ports() -> list[str]:
+        return [port.device for port in serial.tools.list_ports.comports()]
+
+
 @singleton
 class ArduinoConnection:
     def __init__(self) -> None:
@@ -30,10 +34,6 @@ class ArduinoConnection:
             return str(self.vector.readline())
         except AttributeError:
             print("Couldn't read from Arduino!")
-
-    @staticmethod
-    def get_ports() -> list[str]:
-        return [port.device for port in serial.tools.list_ports.comports()]
     
 
 def example(stdscr):
@@ -45,7 +45,7 @@ def example(stdscr):
 
     while True:
         stdscr.clear()
-        stdscr.addstr(0, 0, str(vector.get_ports()))
+        stdscr.addstr(0, 0, str(get_ports()))
 
         stdscr.addstr(1, 0, "Lectura:")
         stdscr.addstr(2, 0, vector.read())
