@@ -1,14 +1,11 @@
 import ttkbootstrap.themes.standard as st
 
 # Variables
+geometry = "1700x723"
+title = "CansatGUI"
+icon = "img\\sinFondo.ico"
 themename = "darkly"
 font = "Cascadia Code 12"
-config = {
-    "geometry": "1700x723",  # Tamaño de la ventana (ratio 2.35:1)
-    "title": "Probando Frames",  # Título de la ventana
-    "icon": "img\\sinFondo.ico",  # Icono de la ventana
-    "style": themename,  # Tema de la ventana
-}
 colores = {
     "background": str(st.STANDARD_THEMES[themename]["colors"]["primary"]),
     "foreground": str(st.STANDARD_THEMES[themename]["colors"]["light"]),
