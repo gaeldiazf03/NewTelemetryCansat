@@ -6,6 +6,7 @@ title = "CansatGUI"
 icon = "img\\sinFondo.ico"
 themename = "darkly"
 font = "Cascadia Code 12"
+bauds_list = ['9600', '115200']
 colores = {
     "background": str(st.STANDARD_THEMES[themename]["colors"]["primary"]),
     "foreground": str(st.STANDARD_THEMES[themename]["colors"]["light"]),

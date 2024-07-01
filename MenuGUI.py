@@ -1,41 +1,120 @@
-import customtkinter
+import ttkbootstrap as ttk
+import tkinter as tk
 
-customtkinter.set_appearance_mode("light")
-customtkinter.set_default_color_theme("dark-blue")
-
-app = customtkinter.CTk()
-app.title("CustomTkinter Sample Menu Bar.py")
-
-def button_callback():
-    print("Button click", combobox_1.get())
-
-def change_appearance_mode_event(new_appearance_mode: str):
-    customtkinter.set_appearance_mode(new_appearance_mode)
-
-def change_scaling_event(new_scaling: str):
-    new_scaling_float = int(new_scaling.replace("%", "")) / 100
-    customtkinter.set_widget_scaling(new_scaling_float)
+# My ports
+from ArduinoConnection import get_ports
+from settings import bauds_list
 
 
-frame_1 = customtkinter.CTkFrame(master=app)
-frame_1.grid(row=0, pady=10, padx=0)
+class Menu_Frame(ttk.Frame):
+    _bauds: list[str] = bauds_list
+    _str_port = "No port selected"
 
-optionmenu_1 = customtkinter.CTkOptionMenu(frame_1, values=["Option 1", "Option 2", "Option 42 long long long..."])
-optionmenu_1.grid(row=0, column=0, pady=10, padx=10)
-optionmenu_1.set("CTk Option Menu")
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(master=parent, *args, **kwargs)
 
-combobox_1 = customtkinter.CTkComboBox(frame_1, values=["Option 1", "Option 2", "Option 42 long long long..."])
-combobox_1.grid(row=0, column=1, pady=10, padx=0)
-combobox_1.set("CTk Combo Box")
+        # Variables de control
+        self.previous_ports: list[str] = []  # Lista para almacenar los puertos
+        self.selected_port: tk.StringVar = tk.StringVar()
+        self.selected_baud: tk.StringVar = tk.StringVar()
 
-appearance_mode_optionemenu = customtkinter.CTkOptionMenu(frame_1, values=["Light", "Dark", "System"], command=change_appearance_mode_event)
-appearance_mode_optionemenu.grid(row=0, column=2, padx=0, pady=10)
+        # Frame Configuration
+        """
+        self.configure(padding=(30, 5, 30, 10))
+        self.style = ttk.Style()
+        self.style.configure('Custom.TFrame', background='black')
+        self.config(style='Custom.TFrame')
+        """
 
-scaling_optionemenu = customtkinter.CTkOptionMenu(frame_1, values=["80%", "90%", "100%", "110%", "120%"], command=change_scaling_event)
-scaling_optionemenu.grid(row=0, column=3, padx=0, pady=10)
+        self.add_spacer(False)  # Initial Separation
 
-text_1 = customtkinter.CTkTextbox(master=frame_1, width=600, height=70)
-text_1.grid(row=1, column=0, columnspan=4, pady=10, padx=10)
-text_1.insert("0.0", "Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk menjadi sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Ia mulai dipopulerkan pada tahun 1960 dengan diluncurkannya lembaran-lembaran Letraset yang menggunakan kalimat-kalimat dari Lorem Ipsum, dan seiring munculnya perangkat lunak Desktop Publishing seperti Aldus PageMaker juga memiliki versi Lorem Ipsum.")
+        self.file_menu = ttk.Menubutton(self, text='Archivo')
+        self.file_menu.pack(side='left', padx=100)
+        self.archivos = ttk.Menu(self.file_menu)
+        self.archivos.add_command(label="Reiniciar", command=lambda: print("reiniciar app"))
+        self.archivos.add_command(label="Guardar", command=lambda: print("guardar xlsx"))
+        self.file_menu["menu"] = self.archivos
 
-app.mainloop()
+        self.add_spacer()  # Separation
+        self.add_spacer()  # Separation
+        self.add_spacer()  # Separation
+
+        self.puertos_menu = ttk.Menubutton(
+            self,
+            text=self._str_port,
+            textvariable=self.selected_port)
+        self.puertos_menu.pack(side='left')
+        self.puertos = ttk.Menu(self.file_menu)
+        self.update_ports()
+        self.puertos_menu["menu"] = self.puertos
+
+        self.add_spacer(False)  # Separation
+
+        self.baudios_puerto = ttk.Menubutton(self, text='Baudios:')
+        self.baudios_puerto.pack(side='left', padx=100)
+        self.bauds = ttk.Menu(self.baudios_puerto)
+        for baud in self._bauds:
+            self.bauds.add_radiobutton(
+                label=baud,
+                value=baud,
+                variable=self.selected_baud,
+                command=lambda b=baud: self.set_baud(b))
+        self.baudios_puerto["menu"] = self.bauds
+
+        self.add_spacer(False)
+
+    def update_ports(self):
+        current_ports = get_ports()
+
+        if current_ports != self.previous_ports:
+            self.previous_ports = current_ports
+            self.puertos.delete(0, 'end')
+
+            for port in current_ports:
+                self.puertos.add_radiobutton(
+                    label=port,
+                    value=port,
+                    variable=self.selected_port,
+                    command=lambda p=port: self.set_port(p))
+
+        if self.selected_port.get() not in current_ports:
+            self.selected_port.set(self._str_port)
+
+        if len(current_ports) < 1:
+            self.selected_port.set("No port available")
+
+        self.after(250, self.update_ports)
+
+    def set_baud(self, baud):
+        self.selected_baud.set(baud)
+        self.baudios_puerto["text"] = baud
+
+    def get_baud(self):
+        return self.selected_baud.get()
+
+    def set_port(self, port):
+        self.selected_port.set(port)
+        self.puertos_menu["text"] = port
+
+    def get_port(self):
+        return self.selected_port.get()
+
+    # Function just to add design
+    def add_spacer(self, expansion=True):
+        spacer = ttk.Frame(self)  # Este ancho se debe de editar
+        spacer.pack(side='left', expand=expansion)
+
+
+if __name__ == '__main__':
+    app = ttk.Window()
+    app.title('Probando Menus')
+    app.geometry('1700x723')
+
+    frame = Menu_Frame(app)
+    frame.configure(width=1700, height=70)
+    frame.pack(fill="x")
+
+    other_button = ttk.Button(app, text='Otro')
+    other_button.pack()
+
+    app.mainloop()
