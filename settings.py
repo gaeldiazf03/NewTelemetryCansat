@@ -5,17 +5,23 @@ geometry = "1700x723"
 title = "CansatGUI"
 icon = "img\\sinFondo.ico"
 themename = "darkly"
-font = "Cascadia Code 12"
+font = ("Cascadia Code", 12)
 bauds_list = ['9600', '115200']
 colores = {
-    "background": str(st.STANDARD_THEMES[themename]["colors"]["primary"]),
-    "foreground": str(st.STANDARD_THEMES[themename]["colors"]["light"]),
-    "activebackground": str(st.STANDARD_THEMES[themename]["colors"]["primary"]),
-    "activeforeground": str(st.STANDARD_THEMES[themename]["colors"]["light"]),
-    "bordercolor": str(st.STANDARD_THEMES[themename]["colors"]["primary"]),
-    "lightcolor": str(st.STANDARD_THEMES[themename]["colors"]["primary"]),
-    "darkcolor": str(st.STANDARD_THEMES[themename]["colors"]["primary"]),
-    "selectcolor": str(st.STANDARD_THEMES[themename]["colors"]["primary"]),
-    "selectbackground": str(st.STANDARD_THEMES[themename]["colors"]["primary"]),
-    "selectforeground": str(st.STANDARD_THEMES[themename]["colors"]["light"])
+    "primary": str(st.STANDARD_THEMES[themename]["colors"]["primary"]),
+    "secondary": str(st.STANDARD_THEMES[themename]["colors"]["secondary"]),
+    "success": str(st.STANDARD_THEMES[themename]["colors"]["success"]),
+    "info": str(st.STANDARD_THEMES[themename]["colors"]["info"]),
+    "warning": str(st.STANDARD_THEMES[themename]["colors"]["warning"]),
+    "danger": str(st.STANDARD_THEMES[themename]["colors"]["danger"]),
+    "light": str(st.STANDARD_THEMES[themename]["colors"]["light"]),
+    "dark": str(st.STANDARD_THEMES[themename]["colors"]["dark"]),
+    "background": str(st.STANDARD_THEMES[themename]["colors"]["bg"]),
+    "foreground": str(st.STANDARD_THEMES[themename]["colors"]["fg"]),
+    "selectedbackground": str(st.STANDARD_THEMES[themename]["colors"]["selectbg"]),
+    "selectedforeground": str(st.STANDARD_THEMES[themename]["colors"]["selectfg"]),
+    "border": str(st.STANDARD_THEMES[themename]["colors"]["border"]),
+    "inputforeground": str(st.STANDARD_THEMES[themename]["colors"]["inputfg"]),
+    "inputbackground": str(st.STANDARD_THEMES[themename]["colors"]["inputbg"]),
+    "active": str(st.STANDARD_THEMES[themename]["colors"]["active"])
 }

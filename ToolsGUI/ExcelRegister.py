@@ -9,7 +9,7 @@ from measurement import measure_time
 
 
 class ExcelRegister:
-    _dirName = "excel_chatgpt3"
+    _dirName = "cansat_data"
     _bookTelemetria = "Telemetria"
     _bookEstadisticas = "Estadisticas"
     _bookGraficas = "Graficas"
@@ -111,18 +111,18 @@ class ExcelRegister:
     def list_headers(self) -> list[str]:
         return self.headers
 
-    @staticmethod
-    def _randFloat() -> str:
-        if np.random.random() < 0.05:
-            return "None"
-        return np.round(np.random.random() * 100, 2)
+
+def _randfloat() -> float | str:
+    if np.random.random() < 0.05:
+        return "None"
+    return np.round(np.random.random() * 100, 2)
 
 
 @measure_time
 def main():
     names = ["Tiempo", "TEMP", "AX", "AY", "AZ", "GX", "GY", "GZ", "VEL", "LAT1", "LON1", "LAT2", "LON2", "PRES", "HUM", "ALT", "PILA1", "PILA2", "DIST"]
     dp = ExcelRegister("Telemetria.xlsx", names)  # Se crea el objeto para registrar los datos
-    datos = {name: [str(ExcelRegister._randFloat())] for name in names}
+    datos = {name: [str(_randfloat())] for name in names}
 
     # for name in names:
     #     dp.insert_graph("Tiempo", name)

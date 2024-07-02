@@ -1,9 +1,10 @@
 import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 import tkinter as tk
 
 # My ports
-from ArduinoConnection import get_ports
-from settings import bauds_list
+from ToolsGUI.ArduinoConnection import get_ports
+from settings import bauds_list, font, colores, themename
 
 
 class Menu_Frame(ttk.Frame):
@@ -17,20 +18,19 @@ class Menu_Frame(ttk.Frame):
         self.previous_ports: list[str] = []  # Lista para almacenar los puertos
         self.selected_port: tk.StringVar = tk.StringVar()
         self.selected_baud: tk.StringVar = tk.StringVar()
+        self.selected_baud.set("Baudios:")
 
-        # Frame Configuration
-        """
-        self.configure(padding=(30, 5, 30, 10))
-        self.style = ttk.Style()
-        self.style.configure('Custom.TFrame', background='black')
-        self.config(style='Custom.TFrame')
-        """
+        self.configure(width=1700, height=70, bootstyle=DARK, padding=(5, 10))
+
+        # Menubutton Configuration
+        self.style_menubutton = ttk.Style()
+        self.style_menubutton.configure('Custom.TMenubutton', font=font, background=colores['primary'])
 
         self.add_spacer(False)  # Initial Separation
 
-        self.file_menu = ttk.Menubutton(self, text='Archivo')
+        self.file_menu = ttk.Menubutton(self, text='Archivo', style='Custom.TMenubutton')
         self.file_menu.pack(side='left', padx=100)
-        self.archivos = ttk.Menu(self.file_menu)
+        self.archivos = ttk.Menu(self.file_menu, font=font)
         self.archivos.add_command(label="Reiniciar", command=lambda: print("reiniciar app"))
         self.archivos.add_command(label="Guardar", command=lambda: print("guardar xlsx"))
         self.file_menu["menu"] = self.archivos
@@ -41,18 +41,21 @@ class Menu_Frame(ttk.Frame):
 
         self.puertos_menu = ttk.Menubutton(
             self,
-            text=self._str_port,
-            textvariable=self.selected_port)
+            textvariable=self.selected_port,
+            style='Custom.TMenubutton')
         self.puertos_menu.pack(side='left')
-        self.puertos = ttk.Menu(self.file_menu)
+        self.puertos = ttk.Menu(self.file_menu, font=font)
         self.update_ports()
         self.puertos_menu["menu"] = self.puertos
 
         self.add_spacer(False)  # Separation
 
-        self.baudios_puerto = ttk.Menubutton(self, text='Baudios:')
+        self.baudios_puerto = ttk.Menubutton(
+            self,
+            textvariable=self.selected_baud,
+            style='Custom.TMenubutton')
         self.baudios_puerto.pack(side='left', padx=100)
-        self.bauds = ttk.Menu(self.baudios_puerto)
+        self.bauds = ttk.Menu(self.baudios_puerto, font=font)
         for baud in self._bauds:
             self.bauds.add_radiobutton(
                 label=baud,
@@ -106,12 +109,11 @@ class Menu_Frame(ttk.Frame):
 
 
 if __name__ == '__main__':
-    app = ttk.Window()
+    app = ttk.Window(themename=themename)
     app.title('Probando Menus')
     app.geometry('1700x723')
 
     frame = Menu_Frame(app)
-    frame.configure(width=1700, height=70)
     frame.pack(fill="x")
 
     other_button = ttk.Button(app, text='Otro')

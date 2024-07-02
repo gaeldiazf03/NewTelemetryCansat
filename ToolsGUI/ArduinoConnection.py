@@ -1,12 +1,10 @@
 import serial
 import serial.tools.list_ports
-import curses
-import os
 from measurement import singleton
 
 
 def get_ports() -> list[str]:
-        return [port.device for port in serial.tools.list_ports.comports()]
+    return [port.device for port in serial.tools.list_ports.comports()]
 
 
 @singleton
@@ -14,7 +12,7 @@ class ArduinoConnection:
     def __init__(self) -> None:
         self.vector = None
         self.baudrates = [9600, 115200]
-        self.puertos = self.list_ports()
+        self.puertos = get_ports()
         self.reading = self.read()        
 
     def connect(self, port: str, baud: int = 115200) -> None:
@@ -34,31 +32,7 @@ class ArduinoConnection:
             return str(self.vector.readline())
         except AttributeError:
             print("Couldn't read from Arduino!")
-    
-
-def example(stdscr):
-    stdscr.clear()
-    stdscr.nodelay(True)
-    curses.curs_set(0)  # Ocultar el cursor
-    vector = ArduinoConnection()
-    lectura = vector.connect("COM13")
-
-    while True:
-        stdscr.clear()
-        stdscr.addstr(0, 0, str(get_ports()))
-
-        stdscr.addstr(1, 0, "Lectura:")
-        stdscr.addstr(2, 0, vector.read())
-
-        stdscr.refresh()
-        if stdscr.getch() == ord('q'):
-            break
-
-
-def main():
-    curses.wrapper(example)
 
 
 if __name__ == '__main__':
-    os.system("cls")
-    main()
+    pass

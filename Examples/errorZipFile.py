@@ -3,6 +3,7 @@ from openpyxl import load_workbook
 import os
 import random
 
+
 class ExcelRegister:
     _bookTelemetria = "Telemetria"
 
@@ -20,15 +21,15 @@ class ExcelRegister:
             with pd.ExcelWriter(self.name_file, engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:
                 df.to_excel(excel_writer=writer, sheet_name=self._bookTelemetria, index=False, header=False, startrow=sheet.max_row)
 
-    def _randFloat(self) -> float:
-        return round(random.uniform(0, 100), 3)
 
+def _randFloat(self) -> float:
+    return round(random.uniform(0, 100), 3)
 
 
 def main():
     dp = ExcelRegister("Telemetria.xlsx")  # Se crea el objeto para registrar los datos
     names = ["Tiempo", "TEMP", "AX", "AY", "AZ", "GX", "GY", "GZ", "VEL", "LAT1", "LON1", "LAT2", "LON2", "PRES", "HUM", "ALT", "PILA1", "PILA2", "DIST"]
-    datos = {name: [str(dp._randFloat())] for name in names}
+    datos = {name: [str(_randFloat())] for name in names}
 
     dp.insert_data(datos)
 

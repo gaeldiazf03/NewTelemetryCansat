@@ -1,9 +1,11 @@
 import serial.tools.list_ports
-import time
+# import time
 import curses
+
 
 def get_ports():
     return [port.device for port in serial.tools.list_ports.comports()]
+
 
 def display_ports(stdscr):
     stdscr.clear()
@@ -25,8 +27,10 @@ def display_ports(stdscr):
         if stdscr.getch() == ord('q'):
             break
 
+
 def main():
     curses.wrapper(display_ports)
+
 
 if __name__ == "__main__":
     main()
