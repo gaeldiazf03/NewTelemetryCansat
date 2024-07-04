@@ -4,22 +4,21 @@ from measurement import singleton
 
 
 def get_ports() -> list[str]:
-    return [port.device for port in serial.tools.list_ports.comports()]
+    return [
+        port.device
+        for port in serial.tools.list_ports.comports()
+    ]
 
 
 @singleton
 class ArduinoConnection:
     def __init__(self) -> None:
-        self.vector = None
-        self.baudrates = [9600, 115200]
-        self.puertos = get_ports()
-        self.reading = self.read()        
+        self.vector = serial.Serial()
 
-    def connect(self, port: str, baud: int = 115200) -> None:
-        try:
-            self.vector = serial.Serial(port, baud, timeout=0.1)
-        except serial.SerialException:
-            print("Could not connect to Arduino, check your connection and try again.")
+    def connect(self, port: str, baud: int) -> None:
+        self.vector.port = port
+        self.vector.baudrate = baud
+        self.vector.open()
 
     def disconnect(self) -> None:
         try:
@@ -27,12 +26,18 @@ class ArduinoConnection:
         except AttributeError:  # Si la conexión no es creada
             print("There is no serial connection!")
 
-    def read(self) -> str:
+    def read(self) -> str | None:
         try:
             return str(self.vector.readline())
         except AttributeError:
-            print("Couldn't read from Arduino!")
+            pass
+        except serial.SerialException:
+            pass
+
+    def check_connection(self) -> bool:
+        return self.vector.is_open
 
 
 if __name__ == '__main__':
-    pass
+    connection: ArduinoConnection = ArduinoConnection()
+    print(connection.check_connection())

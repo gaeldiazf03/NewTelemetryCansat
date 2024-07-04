@@ -6,9 +6,9 @@ import ttkbootstrap as ttk
 # import matplotlib.pyplot as plt
 
 # My imports
-# from ArduinoConnection import ArduinoConnection as ac
 import settings as st
-from FramesGUI import Menu_Frame
+from FramesGUI import MenuFrame, MainFrame
+from ToolsGUI import ArduinoConnection
 
 
 class SerialMonitorApp(ttk.Window):
@@ -22,22 +22,18 @@ class SerialMonitorApp(ttk.Window):
 
         self.resizable(False, False)
 
-        # Variable ttk que se utilizaran
-        self.str_port = ttk.StringVar()
-        self.str_port.set("No port")
-
         # Configuración de la ventana principal
         self.geometry(geometry)
         self.title(title)
         self.iconbitmap(icon)
 
-        self.previous_ports = []  # Variable para almacenar la lista de puertos anterior
-
         # <FRAME> Crea menu y submenus
-        self.menu_frame = Menu_Frame(self)
+        self.menu_frame = MenuFrame(self)
         self.menu_frame.pack(expand=False, fill="x")
 
         # <FRAME> Crea paginas diferentes
+        self.pages_frame = MainFrame(self)
+        self.pages_frame.pack(expand=True, fill="both")
 
         # Probando
         self.bind("<Delete>", self.probando_delete)
@@ -54,5 +50,13 @@ class SerialMonitorApp(ttk.Window):
 
 # Ejecución de la aplicación
 if __name__ == "__main__":
+    connection: ArduinoConnection = ArduinoConnection()
+
     app = SerialMonitorApp()
     app.mainloop()
+
+    # Bloque de seguridad
+    if connection.check_connection() is True:
+        connection.disconnect()
+    else:
+        pass

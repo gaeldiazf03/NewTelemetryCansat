@@ -1,6 +1,7 @@
 from functools import wraps
 from time import time
 
+
 def measure_time(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -14,6 +15,7 @@ def measure_time(func):
 
 def memoize(func):
     cache = {}
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         key = (args, frozenset(kwargs.items()))
@@ -44,6 +46,7 @@ def main(n: int):
     for i in range(1, n):
         sum += i
     return sum
+
 
 if __name__ == '__main__':
     print(main(10000000))

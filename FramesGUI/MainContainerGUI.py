@@ -1,7 +1,7 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from settings import geometry, themename, colores
-from PagesManagerGUI import PagesManager
+from FramesGUI.PagesManagerGUI import PagesManager
 
 
 class MainFrame(ttk.Frame):
@@ -12,7 +12,7 @@ class MainFrame(ttk.Frame):
 
         # Temporal Style
         self.style = ttk.Style()
-        self.style.configure('Custom.TFrame', background=colores['light'])
+        self.style.configure('Custom.TFrame', background=colores['background'])
         self.configure(style='Custom.TFrame')
 
         # Page Manager
