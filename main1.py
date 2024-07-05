@@ -38,6 +38,7 @@ class SerialMonitorApp(ttk.Window):
         # Probando
         self.bind("<Delete>", self.probando_delete)
         self.bind("<Control-w>", self.exiting)
+        self.bind("<Control-W>", self.exiting)
 
     # noinspection PyUnusedLocal
     def exiting(self, event) -> None:
