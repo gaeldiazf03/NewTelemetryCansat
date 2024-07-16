@@ -2,7 +2,7 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from settings import geometry, themename, colores
 from FramesGUI.PagesManagerGUI import PagesManager
-from FramesGUI.Pages import MonitorContainer
+from FramesGUI.Pages import SerialContainer
 
 
 class MainFrame(ttk.Frame):
@@ -20,7 +20,7 @@ class MainFrame(ttk.Frame):
         self.configure_frame = PagesManager(self)
         self.configure_frame.pack(side='left', expand=False, fill='y')
 
-        MonitorContainer(self, bootstyle=DANGER)
+        SerialContainer(self)
 
 
 if __name__ == '__main__':
