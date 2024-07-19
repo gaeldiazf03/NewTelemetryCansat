@@ -8,7 +8,7 @@ def measure_time(func):
         start = time()
         result = func(*args, **kwargs)
         end = time()
-        print(f'{func.__name__} executed in {end - start:.2f} seconds')
+        print(f'{func.__name__} executed in {end - start:.9f} seconds')
         return result
     return wrapper
 
