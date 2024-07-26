@@ -1,28 +1,28 @@
-import serial
+# Funciónes para la GUI
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 import tkinter as tk
 from tkinter import messagebox
+from time import sleep
 
-# My ports
-from ToolsGUI.ArduinoConnection import get_ports, ArduinoConnection
-from settings import bauds_list, font, colores, themename
+from ToolsGUI.ArduinoConnection import get_ports, ArduinoConnection  # Mis funciones importadas
+from settings import bauds_list, font, colores, themename  # Para CSS, pura decoración
+from typing import List  # Es para especificar variables
 
 
 class MenuFrame(ttk.Frame):
-    _bauds: list[str] = bauds_list
+    _bauds: List[str] = bauds_list
 
     def __init__(self, parent, *args, **kwargs) -> None:
         super().__init__(master=parent, *args, **kwargs)
 
         # Variables de control
         self.previous_ports: list[str] = []  # Lista para almacenar los puertos
-        self.selected_port: tk.StringVar = tk.StringVar()
+        self.selected_port: tk.StringVar = tk.StringVar()  # Selección de puerto
         self.selected_port.set("Not port")
-        self.selected_baud: tk.StringVar = tk.StringVar()
+        self.selected_baud: tk.StringVar = tk.StringVar()  # Selección de baudios
         self.selected_baud.set("Baudios:")
-        self.arduino_conn: ArduinoConnection = ArduinoConnection()
-        self.flag_reading: bool = False
+        self.arduino_conn: ArduinoConnection = ArduinoConnection()  # Define conexión arduino
 
         self.configure(  # Configuración del Frame
             width=1700,
@@ -45,7 +45,7 @@ class MenuFrame(ttk.Frame):
         self.file_menu.pack(side='left', padx=100)
         # Menu dentro del MenuButton
         self.archivos = ttk.Menu(self.file_menu, font=font)
-        self.archivos.add_command(label="Reiniciar", command=lambda: print("reiniciar app"))
+        self.archivos.add_command(label="Reiniciar", command=self.reset_connection)
         self.archivos.add_command(label="Guardar", command=lambda: print("guardar xlsx"))
         # Se anexan al MenuButton
         self.file_menu["menu"] = self.archivos
@@ -118,14 +118,12 @@ class MenuFrame(ttk.Frame):
         self.baudios_puerto["text"] = baud
         if self.arduino_conn.check_connection() is True:
             self.arduino_conn.disconnect()
-            self.flag_reading = False
 
     def set_port(self, port) -> None:
         self.selected_port.set(port)
         self.puertos_menu["text"] = port
         if self.arduino_conn.check_connection() is True:
             self.arduino_conn.disconnect()
-            self.flag_reading = False
 
     def get_baud(self) -> int:
         return int(self.selected_baud.get())
@@ -137,17 +135,28 @@ class MenuFrame(ttk.Frame):
     def init_connection(self) -> None:
         try:
             self.arduino_conn.connect(self.get_port(), self.get_baud())
+            self.arduino_conn.reset_connection()
+            self.arduino_conn.start_reading()
         except ValueError:
-            print("No se han ingresado baudios")
-            messagebox.showerror("Error con baudios", "No se ingresado baudios")
-        except serial.serialutil.SerialException:
-            print("No se han ingresado un puerto")
-            messagebox.showerror("Error con el puerto", "No se ingresado puertos")
+            print("Error con los baudios")
+            messagebox.showerror(
+                "Error con los baudios",
+                "Ha ocurrido un error en la selección de los baudios"
+            )
+        except Exception as e:
+            print(Exception(e))
+            messagebox.showerror(
+                "Error de conexión",
+                "El puerto COM no esta disponible o no está seleccionado"
+            )
         else:
             self.btn_start_connection["text"] = "Connected"
             self.btn_start_connection["command"] = self.end_connection
-            self.flag_reading = True
             print("Connection established")
+            messagebox.showinfo(
+                "Conexión Establecida",
+                f"Se ha conectado a Arduino en el puerto {self.get_port()}, los baudios están disponibles en la velocidad {self.get_baud()}"
+            )
 
     def end_connection(self) -> None:
         try:
@@ -155,18 +164,21 @@ class MenuFrame(ttk.Frame):
         except Exception as e:
             print(f"Error: {e}")
         else:
-            self.flag_reading = False
             self.btn_start_connection["text"] = "Not Connected"
             self.btn_start_connection["command"] = self.init_connection
             print("Connection closed")
 
+    def reset_connection(self):
+        self.end_connection()
+        sleep(1)
+        self.init_connection()
+
     def print2terminal(self) -> None:
-        if self.flag_reading:
-            reading = self.arduino_conn.read()
-            if reading is None:
-                self.end_connection()
-            print(reading)
-        self.after(500, self.print2terminal)
+        if self.arduino_conn.check_connection():
+            data = self.arduino_conn.get_reading()
+            if data:
+                print(data)
+        self.after(100, self.print2terminal)
 
     # Function just to add design
     def add_spacer(self, expansion=True):
@@ -183,9 +195,6 @@ if __name__ == '__main__':
 
     frame = MenuFrame(app)
     frame.pack(fill="x")
-
-    other_button = ttk.Button(app, text='Otro')
-    other_button.pack()
 
     app.mainloop()
 

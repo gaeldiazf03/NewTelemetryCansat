@@ -1,14 +1,14 @@
 # GUI imports
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-from tkinter import scrolledtext
+from ttkbootstrap.scrolled import ScrolledText
 
 # Tools imports
 import time
 from ToolsGUI import ArduinoConnection
 
 
-font = ("Cascadia Code", 10, 'bold')
+font = ("Cascadia Code", 10, 'bold')  # Usado en esta página
 
 
 class SerialContainer(ttk.Frame):
@@ -18,8 +18,7 @@ class SerialContainer(ttk.Frame):
         super().__init__(master, *args, **kwargs)
         self.configure(padding=(15, 30, 15, 30))
 
-        self.serial_variable: ttk.StringVar = ttk.StringVar()
-        self.serial_variable.trace('w', self.logic_scrolledText)
+        self.vector: ArduinoConnection = ArduinoConnection()
 
         self.serial_lblframe = ttk.Labelframe(
             self,
@@ -28,31 +27,30 @@ class SerialContainer(ttk.Frame):
         )
         self.serial_lblframe.pack(fill=BOTH, expand=True)
 
-        self.str_serial = scrolledtext.ScrolledText(
+        self.str_serial = ScrolledText(
             self.serial_lblframe,
             wrap=WORD,
             font=font,
-            state='disabled'
+            autohide=True,
+            hbar=True
         )
+        self.str_serial.text['state'] = 'disabled'
         self.str_serial.pack(fill=BOTH, expand=True, padx=15, pady=15)
 
         self.logic_scrolledText()
 
-    def set_serial(self, str_serial: str) -> None:
-        self.serial_variable.set(str_serial)
-
-    def get_serial(self) -> str:
-        return self.serial_variable.get()
-
     def logic_scrolledText(self, *args, **kwargs) -> None:
         time_tuple = time.localtime()
-        time_str = time.strftime(self._time_str, time_tuple)
-        new_serial = self.get_serial()
+        str_time = time.strftime(self._time_str, time_tuple)
 
-        self.str_serial['state'] = 'normal'
-        self.str_serial.insert(END, f'{time_str} {new_serial}\n')
-        self.str_serial.see(END)
-        self.str_serial['state'] = 'disabled'
+        if self.vector.check_connection():
+            data = self.vector.get_reading()
+            if data:
+                self.str_serial.text['state'] = 'normal'
+                self.str_serial.text.insert(END, f'{str_time} {data}\n')
+                self.str_serial.text.see(END)
+                self.str_serial.text['state'] = 'disabled'
+        self.after(100, self.logic_scrolledText)
 
 
 if __name__ == '__main__':
@@ -67,18 +65,5 @@ if __name__ == '__main__':
     serial = SerialContainer(app)
     serial.pack(fill=BOTH, expand=True)
 
-    def read_serial() -> None:
-        try:
-            reads = arduino.get_reading()
-            if reads:
-                serial.set_serial(reads)
-                print(serial.get_serial())
-        except Exception as e:
-            print(e)
-
-    read_serial()
-    app.after(200, read_serial)
-
     app.mainloop()
-
     arduino.disconnect()

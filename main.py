@@ -1,10 +1,6 @@
 # GUI imports
 import ttkbootstrap as ttk
 
-# Graphical imports
-# import numpy as np
-# import matplotlib.pyplot as plt
-
 # My imports
 import settings as st
 from FramesGUI import MenuFrame, MainFrame
